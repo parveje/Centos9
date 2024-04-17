@@ -1,0 +1,42 @@
+---
+- name: Create a web content directory
+  hosts: dev
+  tasks:
+    - name: Install httpd package
+      yum:
+        name: httpd
+        state: present
+    - name: Start and enable httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+    - name: Allow http protocol
+      firewalld:
+        service: http
+        state: enabled
+        permanent: yes
+        immediate: yes
+    - name: Create webdev group
+      group:
+        name: webdev
+        state: present
+    - name: create /webdev directory
+      file:
+        path: /webdev
+        owner: webdev
+        mode: 2775
+        setype: httpd_sys_content_t
+        state: directory
+    - name: create symbolic link
+      file:
+        src: /webdev
+        dest: /var/www/html/webdev
+        state: link
+    - name: create index.html file
+      copy:
+        content: "Development"
+        dest: /webdev/index.html
+        setype: httpd_sys_content_t
+    
+...

@@ -1,0 +1,6 @@
+---
+- name: Install web services
+  hosts: webservers
+  roles:
+    - roles/apache 
+...

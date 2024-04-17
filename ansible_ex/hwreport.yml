@@ -1,0 +1,34 @@
+---
+- name: Generate hardware report
+  hosts: all
+  tasks:
+    - name: copy hwreport.txt
+      copy:
+        src: hwreport.txt
+        dest: /root/hwreport.txt
+    - name: get hostname
+      replace: 
+        path: /root/hwreport.txt
+        regexp: 'hostname'
+        replace: "{{ ansible_hostname }}"
+    - name: get memtotalmb
+      replace:
+        path: /root/hwreport.txt
+        regexp: 'totalmemorymb'
+        replace: "{{ ansible_memtotal_mb | default ('NONE') }}"
+    - name: get bios version
+      replace:
+        path: /root/hwreport.txt
+        regexp: 'biosversion'
+        replace: "{{ ansible_bios_version }}"
+    - name: get sda disk size
+      replace:
+        path: /root/hwreport.txt
+        regexp: 'sdasize'
+        replace: "{{ ansible_devices.sda.size | default ('NONE') }}"
+    - name: get sdb disk size
+      replace:
+        path: /root/hwreport.txt
+        regexp: 'sdbsize'
+        replace: "{{ ansible_devices.sdb.size | default ('NONE') }}"
+...

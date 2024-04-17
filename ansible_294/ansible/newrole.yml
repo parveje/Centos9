@@ -1,0 +1,6 @@
+---
+- name: Create and use a role
+  hosts: webservers
+  roles:
+    - apache
+...

@@ -1,0 +1,10 @@
+---
+- name: Use RHEL system roles
+  hosts: all
+  vars:
+    timesync_ntp_servers:
+      - hostname: 0.asia.pool.ntp.org
+        iburst: yes
+  roles:
+    - rhel-system-roles.timesync
+...

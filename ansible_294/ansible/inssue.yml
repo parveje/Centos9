@@ -1,0 +1,20 @@
+---
+- name: Modify fiile content
+  hosts: all
+  tasks:
+    - name: Modify dev host group file content
+      copy: 
+        content: "Development"
+        dest: /etc/issue
+      when: "'dev' in group_names"
+    - name: Modify test host group
+      copy:
+        content: "Test"
+        dest: /etc/issue
+      when: "'test' in group_names"
+    - name: Modify prod host group file content
+      copy:
+        content: "Production"
+        dest: /etc/issue
+      when: "'prod' in group_names"
+...

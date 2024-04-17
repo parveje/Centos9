@@ -1,0 +1,5 @@
+Invenoty Hostname = hostname
+Total Memory = totalmemorymb
+BIOS Version = biosversion
+SDA Disk size = sdasize
+SDB Disk size = sdbsize

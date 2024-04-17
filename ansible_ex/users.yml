@@ -1,0 +1,41 @@
+---
+- name: Create developer users
+  hosts: dev,test 
+  vars_files:
+    - locker.yml
+    - user_list.yml
+  tasks:
+    - name: create group devops
+      group:
+        name: devops
+        state: present  
+    - name: create developer users
+      user:
+        name: "{{item.username}}"
+        group: devops
+        password: "{{ PW_developer | password_hash('sha512') }}"
+        state: present
+      when: item.job == "developer"
+      loop: "{{ users }}"
+
+- name: create manager account
+  hosts: prod
+  vars_files:
+    - locker.yml
+    - user_list.yml
+  tasks:
+    - name: Create manager group
+      group:
+        name: opsmgr
+        state: present
+    - name: Crete manager group
+      user:
+        name: "{{ item.username }}"
+        group: opsmgr
+        password: "{{ PW_manager | password_hash('sha512') }}"
+        state: present
+      when: item.job == "manager"
+      loop: "{{ users }}"
+      
+
+...

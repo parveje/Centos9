@@ -1,0 +1,2 @@
+ansible all -m yum_repository -a 'name=EX294_BASE description="EX294 base software" baseurl=http://content.example.com/rhel8.0/x86_64/dvd/BaseOs gpgcheck=yes gpgkey=http://server.network.example.com/RHEL/RPM-GPG-KEY-redhat-release enabled=yes state=absent'
+ansible all -m yum_repository -a 'name=EX294_STREM description="EX294 base software" baseurl=http://content.example.com/rhel8.0/x86_64/dvd/AppStream gpgcheck=yes gpgkey=http://server.network.example.com/RHEL/RPM-GPG-KEY-redhat-release enabled=yes state=absent'

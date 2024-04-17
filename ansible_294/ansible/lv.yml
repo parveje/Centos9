@@ -1,0 +1,41 @@
+---
+- name: Create LVM partition
+  hosts: all
+  tasks:
+    - name: Create partiion
+      parted:
+        device: /dev/sdb
+        number: 1
+        flags: [ lvm ]
+        state: present
+    - name: Create a volume group on top of /dev/sda1
+      lvg:
+        vg: research
+        pvs: /dev/sdb1
+        state: present
+    - name: Check research vg exists or not
+      debug:
+        msg: "volume group does not exist"
+      when: "'research' not in ansible_lvm.vgs"
+    - name: Creae LV using research VG
+      block:
+        - name: Create 1500m LV
+          lvol:
+            vg: research 
+            lv: data1
+            size: 1500m
+      rescue:
+        - name: Can not create 1500M lV
+          debug:
+            msg: "Could not create logical volume of that size"
+        - name: Create 800M LV
+          lvol:
+            vg: research
+            lv: data1
+            size: 400
+      always:
+        - name: Create filesystem
+          filesystem:
+            fstype: ext4
+            dev: /dev/research/data1 
+...

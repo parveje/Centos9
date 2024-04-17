@@ -1,0 +1,10 @@
+---
+- name: Configure /etc/hosts file
+  hosts: all
+  tasks:
+    - name: Copy host.j2 file in the /root/myhosts
+      template:
+        src: host.j2
+        dest: /root/myhosts
+      when: "'dev' in group_names"
+...

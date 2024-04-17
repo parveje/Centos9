@@ -1,0 +1,9 @@
+---
+users:
+  - username: saidur
+    job: developer
+  - username: sayema
+    job: test
+  - username: iqbal
+    job: manager
+...
