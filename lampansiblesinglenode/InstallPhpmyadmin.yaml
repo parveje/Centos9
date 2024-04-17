@@ -1,0 +1,12 @@
+---
+- name: Install phpmyadmin
+  hosts: LAMP
+  tasks:
+    - name: install phpmyadmin
+      yum:
+        name: phpmyadmin
+        state: latest
+    - name: Copy config file
+      copy:
+        src: phpMyAdmin.conf
+        dest: /etc/httpd/conf.d/phpMyAdmin.conf 

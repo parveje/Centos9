@@ -1,0 +1,13 @@
+---
+- name: Git Clone
+  hosts: LAMP
+  tasks:
+  - name: Install Git
+    yum:
+      name: git
+      state: latest
+  - name: Clone Git from Github
+    git:
+      repo: https://github.com/Iqbalkhan319/bhw.git
+      dest: /var/www/html/bhw
+  

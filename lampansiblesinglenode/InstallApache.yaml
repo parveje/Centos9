@@ -1,0 +1,22 @@
+---
+- name: Install apache webserver
+  hosts: LAMP
+  tasks:
+    - name: install apache
+      yum:
+        name: httpd
+        state: latest
+    - name: start apache
+      service:
+        name: httpd
+        state: started
+        enabled: true
+    - name: enable firewall port 80
+      firewalld:
+        service: http
+        permanent: yes
+        state: enabled
+    - name: reload service firewalld
+      systemd:
+        name: firewalld
+        state: reloaded

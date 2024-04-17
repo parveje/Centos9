@@ -1,0 +1,16 @@
+---
+- name: Deploy APP  Source Code
+  hosts: appnode
+  tasks:
+    - name: Copy Source code
+      copy:
+        src: /var/lib/jenkins/workspace/pull-dynamic-website/
+        dest: /var/www/html/phpapp
+- name: Deploy DB File
+  hosts: dbnode
+  tasks:
+    - name: Copy SQL File
+      copy:
+        src: /var/lib/jenkins/workspace/pull-dynamic-website/SQL_File/bhw.sql
+        dest: /tmp/dump.sql
+...

@@ -1,0 +1,95 @@
+version: '3.7'
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+    - 9090:9090
+    command:
+    - --config.file=/etc/prometheus/prometheus.yml
+    volumes:
+    - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+    - cadvisor
+    networks:
+      - frontend-net
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    ports:
+    - 8080:8080
+    volumes:
+    - /:/rootfs:ro
+    - /var/run:/var/run:rw
+    - /sys:/sys:ro
+    - /var/lib/docker/:/var/lib/docker:ro
+    depends_on:
+    - redis
+    networks:
+      - frontend-net
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+    - 6379:6379
+    volumes:
+    - /home/mxsysadmin/dockerStorage/redis:/data
+    networks:
+      - frontend-net
+  redisinsight:
+    image: redislabs/redisinsight:latest
+    container_name: redis-insight-server
+    restart: always
+    ports:
+    - 8001:8001
+    #previleged: true
+    depends_on:
+    - redis
+    #environment:
+    #- REDIS_HOST=redis
+    #- REDIS_PORT= 6379
+    volumes:
+    - /home/mxsysadmin/dockerStorage/redis-insight:/db
+    networks:
+      - frontend-net
+  grafana:
+    image: grafana/grafana:7.5.7
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    volumes:
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - grafana-data:/var/lib/grafana
+    networks:
+      - frontend-net
+  backend:
+    container_name: mysqldb
+    image: mysql:latest
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: Time@12345
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+      - /home/mxsysadmin/dockerStorage/mysql:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - frontend-net
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
+    ports:
+      - 3001:80
+    environment:
+      PMA_HOST: backend
+    restart: unless-stopped
+    networks:
+      - frontend-net
+volumes:
+  grafana-data:
+
+networks:
+  frontend-net:
+    name: frontend-net
+    external: true

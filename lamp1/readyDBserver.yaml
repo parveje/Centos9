@@ -1,0 +1,88 @@
+---
+- name: MySql installation
+  hosts: dbnode
+  become: yes 
+  vars_files:
+    - vars/main.yml
+  tasks:
+  - name: Install MySQL repository
+    yum:
+      name: https://repo.mysql.com//mysql80-community-release-el7-7.noarch.rpm
+      state: latest
+ 
+  - name: Disable MySQL 8.0 repository
+    shell: yum-config-manager --disable mysql80-community
+ 
+  - name: Enable MySQL 5.7 repository
+    shell: yum-config-manager --enable mysql57-community
+ 
+  - name: Install MySQL packages
+    yum:
+      name: "{{ packages }}"
+      state: present
+    vars:
+      packages:
+        - mysql-community-server
+        - mysql-community-client
+        - MySQL-python
+ 
+  - name: Enable the MySQL service
+    service:
+      name: mysqld
+      state: started
+      enabled: true
+  - name: Enable MySQL Port in firewall
+    firewalld:
+      port: 3306/tcp
+      permanent: yes
+      state: enabled
+  - name: Acquire temporary root password
+    shell: "awk -F': ' '$0 ~ \"temporary password\"{print $2}' /var/log/mysqld.log"
+    register: mysql_root_password_temp
+  - name: Set new root password from default temporary password
+    shell: "mysql -e \"SET PASSWORD = '{{ passwd_mysql_root }}';\"
+         --connect-expired-password -uroot -p'{{ mysql_root_password_temp.stdout }}'
+         && touch /root/.my.password.changed"
+    args:
+      creates: /root/.my.password.changed
+  - name: Create /etc/my.cnf
+    template:
+      src: mysql.cnf.j2
+      dest: /etc/my.cnf
+      owner: root
+      group: root
+      mode: 0644
+      backup: true
+  - name: Copy root .my.cnf file
+    template:
+      src: root-my.cnf.j2
+      dest: /root/.my.cnf
+      owner: root
+      group: root
+      mode: 0600
+  - name: Restart the MySQL service
+    service:
+      name: mysqld
+      state: restarted
+  - name: Create a new database
+    mysql_db:
+      name: bhw
+      state: present
+  - name: Restore database
+    mysql_db:
+      name: bhw
+      state: import
+      target: /tmp/dump.sql
+  - name: user mysql
+    mysql_user:
+      name: root
+      host: localhost
+      password: "{{ passwd_mysql_root }}"
+      login_user: root
+      login_password: "{{ passwd_mysql_root }}"
+      priv: "bhw.*:SELECT,GRANT"
+      update_password: on_create
+  - name: Restart the MySQL service
+    service:
+      name: mysqld
+      state: restarted

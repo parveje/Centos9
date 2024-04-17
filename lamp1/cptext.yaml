@@ -1,0 +1,20 @@
+---
+- name: lineinfile module demo
+  hosts: appnode
+  become: true
+  tasks:
+    - name: Copy Config File
+      copy:
+        src: /playbook/config.php
+        dest: /var/www/html/phpapp/includes/config.php
+
+    - name: Update  config file
+      ansible.builtin.lineinfile:        
+        path: /var/www/html/phpapp/includes/config.php
+        insertafter: '// DB credentials.'
+        line: "{{item.line}}"
+      with_items:
+        - {'line': "define('DB_HOST', 'db');"}
+        - {'line': "define('DB_USER', 'root');"}
+        - {'line': "define('DB_PASS', 'Passw0rd*test');"}
+        - {'line': "define('DB_NAME', 'bhw');"}

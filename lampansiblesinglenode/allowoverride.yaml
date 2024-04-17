@@ -1,0 +1,17 @@
+---
+- name: lineinfile module demo
+  hosts: LAMP
+  become: true
+  tasks:
+    - name: Update  config file
+      ansible.builtin.replace:
+        path: /etc/httpd/conf/httpd.conf
+        after: '<Directory "/var/www">'
+        before: '# Allow open access:'
+        regexp: 'AllowOverride None'
+        replace: 'AllowOverride ALL'
+    - name: restart Apache service
+      service:
+        name: "httpd"
+        state: restarted
+        enabled: yes

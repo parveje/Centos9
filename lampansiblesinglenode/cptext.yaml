@@ -1,0 +1,20 @@
+---
+- name: lineinfile module demo
+  hosts: LAMP
+  become: true
+  tasks:
+    - name: Copy Config File
+      copy:
+        src: /playbook/config.php
+        dest: /var/www/html/bhw/includes/config.php
+
+    - name: Update  config file
+      ansible.builtin.lineinfile:        
+        path: /var/www/html/bhw/includes/config.php
+        insertafter: '// DB credentials.'
+        line: "{{item.line}}"
+      with_items:
+        - {'line': "define('DB_HOST', 'localhost');"}
+        - {'line': "define('DB_USER', 'root');"}
+        - {'line': "define('DB_PASS', 'Flyto#mo0n');"}
+        - {'line': "define('DB_NAME', 'bhw');"}
