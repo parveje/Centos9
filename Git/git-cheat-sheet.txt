@@ -10,7 +10,9 @@ git config --global user.email "iqbalkhan319@gmail.com"
 git config --global user.name "iqbalkhan319"
 git add .															#Prepare for move from working area to staging area
 git commit -m "first commit"										# Add commit
-git remote add origin git@github.com:Iqbalkhan319/learngit.git		# Add remote repository
+git remote add origin git@github.com:Iqbalkhan319/learngit.git		# Add remote repository with SSH
+or
+git remote set-url origin https://<your-username>:<your-PAT>@github.com/your-username/your-repo.git		# Add remote repository with HTTPS
 git push -u origin main
 
 ##Restore Fill ##
