@@ -38,7 +38,7 @@ git checkout sarah	# Switch to new branch
 git checkout -b sarah	# Create and switch to new branch
 git branch -d sarah	# Delete branch
 git branch			#check branc list
-git branch -a  		# Find local and remote branch list
+git branch -a		# Find local and remote branch list
 
 ##Mergeing###
 --------------
@@ -103,7 +103,3 @@ git stash show stash@{1}
 ------------------------------
 git reflog
 git reset --hard 8ad5
-
-
-
-
